@@ -17,12 +17,12 @@ async function registration (name, email, phone, password, lastname) {
     const activation_link = uuid.v4()
     const user = await UserHelpers.create({ name, email, hashPassword, lastname, phone, activation_link })
     const userDto = new UserDTO(user)
-    await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activation_link}`)
+    // await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activation_link}`)
 
     const tokens = TokenService.generateTokens({ ...userDto })
 
     await TokenService.saveToken(userDto.id, tokens.refreshToken)
-    return { ...tokens, user: userDto }
+    return { ...tokens, activate_link: `${process.env.API_URL}/api/activate/${activation_link}`, user: userDto }
 }
 
 async function resetSendMail (email) {
